@@ -1332,20 +1332,21 @@ Tabela: dim_tempo
 
 ## Apresentação dos dados
 
-Dashboard feito no PowerBI
+Dashboard feito no PowerBI: https://sempreuninassau-my.sharepoint.com/:u:/g/personal/56000540_sempreuni7_com_br/Efg_fUjVaehLr8_VZ-xgHnUBbu0T4_c6vQM1RF0sp2rJTg 
 
 * Relatórios:
+    * Filtros por ano, trimestre e mês	
     * Totais Gerais de Valor Original (Empenho)
     * Totais Gerais Pago
-    * Totais Gerais a pagar
+    * Totais Gerais Pendentes
+    * Discrepância dos dados
+    * Tabela geral por Órgão, Fonte, Credor e Valor do empenho
+ ![WhatsApp Image 2023-12-06 at 18 28 39](https://github.com/melissareboucas/BD-AV2/assets/86539553/c5d5fe36-5a29-4112-987b-3697044037aa)
+ 
 * Painéis:
-    * Painel de Credor
-    * Painel de Fonte
-    * Painel de Órgão
-* Visualizações:
-    * Gráficos de barras
-      fotinho
-    * Gráficos de linhas
-      fotinho
-    * Gráficos de pizza
-      fotinho
+    * Filtros por ano, trimestre e mês
+    * Valor Pago por Órgão
+    * Valor Pago por Fonte
+    * Valor Pago por Credores
+![WhatsApp Image 2023-12-06 at 18 28 57](https://github.com/melissareboucas/BD-AV2/assets/86539553/419b8e29-e03c-455a-b906-5ec8b3b4c852)
+
