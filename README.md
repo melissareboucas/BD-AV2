@@ -985,6 +985,17 @@ Para validar a coluna vlr_empenho, utilizamos o seguinte filtro:
 select * from dbo.tabelaOds where vlr_empenho = 0
 ```
 Com isso, encontramos quais linhas não apresentam nenhum valor de empenho, logo essas linhas representam pontos que não geraram custos. Assim, removemos essas linhas para não apresentar distorção.
+![Untitled](https://github.com/melissareboucas/BD-AV2/assets/86539553/89c0e368-ee39-498c-8bfa-aa65fcf7f557)
+
+```
+Select valor_pago, vlr_resto_pagar, dth_pagamento,vlr_empenho from dbo.tabelaODS where valor_pago is null and vlr_resto_pagar = 0.00 and dth_pagamento is null and vlr_empenho = 0
+
+DELETE FROM dbo.tabelaODS 
+WHERE valor_pago IS NULL 
+AND vlr_resto_pagar = 0.00 
+AND dth_pagamento IS NULL 
+AND vlr_empenho = 0
+```
 
 #### Tratamento de valores nulos
 Validamos alguns valores nulos em colunas.
