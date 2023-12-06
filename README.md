@@ -2,7 +2,7 @@
 
 ## Objetivos
 
-Este projeto tem como objetivo realizar uma análise de dados com base na execução financeira, utilizando a base de dados "Execução Financeira V4". A análise abrange desde a extração dos dados até a apresentação visual das informações relevantes em um BI.
+Este projeto tem como objetivo realizar uma análise de dados com base na execução financeira, utilizando a base de dados "Execução Financeira V4". A análise abrange desde a extração dos dados até a apresentação visual das informações relevantes no power BI.
 
 ## Extração dos dados
 
