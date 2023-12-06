@@ -111,38 +111,44 @@ ALTER TABLE fato_empenho
   ADD FOREIGN KEY (codigoFonte) REFERENCES dim_fonte (codigoFonte);
 --dimensões
 
--- Criando tabela dimensão calendário
-CREATE TABLE dim_calendario
-(
-	
-    Dia int,
-    Mês int,
-    MêsNome varchar(255),
-    trimestre int,
-    Ano int,
+
+USE dw;
+
+-- Criar a tabela dim_tempo
+CREATE TABLE dim_tempo (
+    ano INT NOT NULL,
+    mes INT NOT NULL,
+    trimestre INT NOT NULL,
+    dia INT NOT NULL,
+    data DATE PRIMARY KEY
 );
 
+-- Populando os valores dessa tabela dim_tempo
+DECLARE @anoInicial INT = 2019;
+DECLARE @anoFinal INT = 2022;
 
--- Populando tabela dim_calendário
-INSERT INTO dim_calendario (Dia, Mês, MêsNome, trimestre, Ano)
-SELECT DISTINCT
-			   DAY(dataPagamento)                                 AS Dia
-			 , MONTH(dataPagamento)                               AS Mês
-			 , DATENAME(MONTH, dataPagamento)                     AS MêsNome
-			 , CEILING(CAST(MONTH(dataPagamento) AS decimal) / 3.0) AS trimestre
-			 , YEAR(dataPagamento)                                AS Ano
-FROM fato_empenho
-WHERE dataPagamento IS NOT NULL;  -- Adicione este filtro se necessário
+WHILE @anoInicial <= @anoFinal
+BEGIN
+    DECLARE @mes INT = 1;
 
+    WHILE @mes <= 12
+    BEGIN
+        DECLARE @dia INT = 1;
 
+        WHILE @dia <= DAY(EOMONTH(CAST(@anoInicial AS VARCHAR) + '-' + CAST(@mes AS VARCHAR) + '-01'))
+        BEGIN
+            DECLARE @data DATE = CAST(@anoInicial AS VARCHAR) + '-' + CAST(@mes AS VARCHAR) + '-' + CAST(@dia AS VARCHAR);
+            DECLARE @trimestre INT = (MONTH(@data) - 1) / 3 + 1;
 
+            INSERT INTO dim_tempo (ano, mes, trimestre, dia, data)
+            VALUES (@anoInicial, @mes, @trimestre, @dia, @data);
 
+            SET @dia = @dia + 1;
+        END
 
+        SET @mes = @mes + 1;
+    END
 
-
-
-
-
-
-
+    SET @anoInicial = @anoInicial + 1;
+END
 
