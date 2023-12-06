@@ -1105,6 +1105,8 @@ Nessa etapa, os dados já ajustados saem da `stage area`, para um `datawarehouse
 
 O datawarehouse desse projeto consiste na tabela fato:
 - `fato_empenho`
+
+  
 E nas dimensões:
 - `dim_orgao`
 - `dim_fonte`
@@ -1172,6 +1174,7 @@ ALTER COLUMN codigoOrgao varchar(255) not null;
 --criando a chave primária
 ALTER TABLE dim_orgao
   ADD PRIMARY KEY (codigoOrgao);
+
 ```
 
 Criar tabela dimensão fonte
@@ -1215,7 +1218,6 @@ ALTER TABLE dim_credor
 
 Relacionar todas as tabelas
 ```
---criando chaves estrangeiras
 ALTER TABLE fato_empenho
 ALTER COLUMN codigoOrgao varchar(255);
 
@@ -1238,45 +1240,108 @@ ALTER TABLE fato_empenho
 
 Criar tabela dimensão calendário
 ```
-CREATE TABLE dim_calendario
-(
-	
-    Dia int,
-    Mês int,
-    MêsNome varchar(255),
-    trimestre int,
-    Ano int,
+USE dw;
+
+-- Criar a tabela dim_tempo
+CREATE TABLE dim_tempo (
+    ano INT NOT NULL,
+    mes INT NOT NULL,
+    trimestre INT NOT NULL,
+    dia INT NOT NULL,
+    data DATE PRIMARY KEY
 );
 
+-- Populando os valores dessa tabela dim_tempo
+DECLARE @anoInicial INT = 2019;
+DECLARE @anoFinal INT = 2022;
 
--- Populando tabela dim_calendário
-INSERT INTO dim_calendario (Dia, Mês, MêsNome, trimestre, Ano)
-SELECT DISTINCT
-			   DAY(dataPagamento)                                 AS Dia
-			 , MONTH(dataPagamento)                               AS Mês
-			 , DATENAME(MONTH, dataPagamento)                     AS MêsNome
-			 , CEILING(CAST(MONTH(dataPagamento) AS decimal) / 3.0) AS trimestre
-			 , YEAR(dataPagamento)                                AS Ano
-FROM fato_empenho
-WHERE dataPagamento IS NOT NULL;  -- Adicione este filtro se necessário
+WHILE @anoInicial <= @anoFinal
+BEGIN
+    DECLARE @mes INT = 1;
+
+    WHILE @mes <= 12
+    BEGIN
+        DECLARE @dia INT = 1;
+
+        WHILE @dia <= DAY(EOMONTH(CAST(@anoInicial AS VARCHAR) + '-' + CAST(@mes AS VARCHAR) + '-01'))
+        BEGIN
+            DECLARE @data DATE = CAST(@anoInicial AS VARCHAR) + '-' + CAST(@mes AS VARCHAR) + '-' + CAST(@dia AS VARCHAR);
+            DECLARE @trimestre INT = (MONTH(@data) - 1) / 3 + 1;
+
+            INSERT INTO dim_tempo (ano, mes, trimestre, dia, data)
+            VALUES (@anoInicial, @mes, @trimestre, @dia, @data);
+
+            SET @dia = @dia + 1;
+        END
+
+        SET @mes = @mes + 1;
+    END
+
+    SET @anoInicial = @anoInicial + 1;
+END
 ```
+![WhatsApp Image 2023-12-06 at 18 24 30](https://github.com/melissareboucas/BD-AV2/assets/86539553/9df077f2-8556-43d9-8d2f-a896ea4bb69b)
 
 
 ### Dicionário de dados
+Tabela: fato_empenho
 
+| Coluna                  | Tipo     | Descrição                                               |
+|-------------------------|----------|---------------------------------------------------------|
+| dataEmpenho               | Data     | Data do empenho                                         |
+| dataPagamento             | Data     | Data do pagamento                                         |
+| dataProcessamento               | Data     | Data do processamento                                         |
+| codigoCredor           | Varchar  | Código do credor                                        |
+| codigoFonte           | Varchar  | Código da fonte                                         |
+| codigoNumeroEmpenho   | Varchar  | Número do empenho                                       |
+| codigoOrgao            | Varchar  | Código do órgão                                         |
+| idFato            | Varchar  | Código único do evento                                         |
+| valorEmpenho            | decimal  | Valor do empenho                                         |
+| valorPago           | decimal  | Valor pago                                         |
+
+Tabela: dim_orgao
+
+| Coluna                  | Tipo     | Descrição                                               |
+|-------------------------|----------|---------------------------------------------------------|
+| codigoOrgao               | Varchar     | Codigo do Órgão                                    |
+| descricaoOrgao               | Varchar     | descrição do Órgão                                    |
+
+Tabela: dim_credor
+
+| Coluna                  | Tipo     | Descrição                                               |
+|-------------------------|----------|---------------------------------------------------------|
+| codigoCredor               | Varchar     | Codigo do Credor                                        |
+| descricaoNomeCredor               | Varchar     | Nome do Credor                                        |
+
+Tabela: dim_fonte
+
+| Coluna                  | Tipo     | Descrição                                               |
+|-------------------------|----------|---------------------------------------------------------|
+| codigoFonte             | Varchar     | Codigo da Fonte                                        |
+| descricaoFonte               | Varchar     | descrição da Fonte                                        |
+
+Tabela: dim_tempo
+
+| Coluna                  | Tipo     | Descrição                                               |
+|-------------------------|----------|---------------------------------------------------------|
+| ano             | int     | Ano de aplicação                                      |
+| dia             | int     | Dia de aplicação                                      |
+| mes             | int     | Mês de aplicação                                      |
+| trimestre             | int     | Trimestre de aplicação                                      |
 
 
 ## Apresentação dos dados
 
-Link do BI: zzzzz
+Dashboard feito no PowerBI
 
 * Relatórios:
     * Totais Gerais de Valor Original (Empenho)
     * Totais Gerais Pago
     * Totais Gerais a pagar
 * Painéis:
-    * Painel de xxx
-    * Painel de yyy
+    * Painel de Credor
+    * Painel de Fonte
+    * Painel de Órgão
 * Visualizações:
     * Gráficos de barras
       fotinho
