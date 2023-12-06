@@ -433,7 +433,7 @@ having COUNT(*) > 1;
 		WHEN cod_credor = '00280741' THEN 'BANCO SANTANDER (BRASIL) S.A.'
 		WHEN cod_credor = '00280888' THEN 'R & R DEDETIZAÇÕES E SERVIÇOS LTDA'
 		WHEN cod_credor = '00281595' THEN 'F W C CONSTRUCOES EIRELI'
-		WHEN cod_credor = '00282827' THEN 'VOLT  LOCAÇÃO  DE EQUIPAMENTOS  EIRELI EP'
+		WHEN cod_credor = '00282827' THEN 'VOLT  LOCAÇÃO  DE EQUIPAMENTOS  EIRELI –EP'
 		WHEN cod_credor = '00282903' THEN 'HOSTWEB DATA CENTER E SERVICOS EIRELI'
 		WHEN cod_credor = '00283243' THEN 'RUBLENIO BERGSON GOMES'
 		WHEN cod_credor = '00283411' THEN 'BMK-AP EMPREENDIMENTOS EIRELI'
@@ -877,11 +877,30 @@ having COUNT(*) > 1;
 	SET dsc_fonte = 'FONTE SEM DESCRICAO'
 	WHERE dsc_fonte IS NULL;
 
-
-
-
 	
+	-- verifica valor pago nulo, resto a pagar zerado e sem data de pagamento.
+	Select valor_pago, vlr_resto_pagar, dth_pagamento from dbo.tabelaODS where valor_pago is null and vlr_resto_pagar = 0.00 and dth_pagamento is null
 
+	-- Atribuindo 0.00 aos valores pagos que não tem data de pagamento.
+	UPDATE dbo.tabelaODS 
+	SET valor_pago = 0.00 
+	WHERE valor_pago IS NULL 
+	AND vlr_resto_pagar = 0.00 
+	AND dth_pagamento IS NULL
 
+	Select * from dbo.tabelaODS where valor_pago = 0.0 and vlr_resto_pagar != 0.00 and dth_pagamento is not null
 
+-- valores extremos e Outliers	
+select * from dbo.tabelaOds where vlr_empenho = 0
 
+--comando para que possamos ver a quantidade de linhas que precisam ser excluidas.
+Select valor_pago, vlr_resto_pagar, dth_pagamento,vlr_empenho from dbo.tabelaODS where valor_pago is null and vlr_resto_pagar = 0.00 and dth_pagamento is null and vlr_empenho = 0
+
+-- Comando para excluir elas.
+DELETE FROM dbo.tabelaODS 
+WHERE valor_pago IS NULL 
+AND vlr_resto_pagar = 0.00 
+AND dth_pagamento IS NULL 
+AND vlr_empenho = 0
+
+Select valor_pago, vlr_resto_pagar, dth_pagamento from dbo.tabelaODS where valor_pago is null and vlr_resto_pagar = 0.00 and dth_pagamento is null
